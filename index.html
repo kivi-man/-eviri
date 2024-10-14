@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kivi Çeviri</title>
+    <style>
+        /* Genel Stil */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4; /* Varsayılan açık tema rengi */
+            color: #333; /* Varsayılan açık tema metin rengi */
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff; /* Varsayılan açık tema arka plan rengi */
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        h1 img {
+            height: 50px; /* Logo boyutu */
+            margin-left: 10px; /* Logo ve metin arasındaki boşluk */
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #5cb85c;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 4%;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .small-button {
+            padding: 5px 10px; /* Küçük buton için daha az padding */
+            font-size: 14px; /* Küçük buton için daha küçük yazı boyutu */
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        /* Koyu Tema Stili */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212; /* Koyu tema arka plan rengi */
+                color: #ffffff; /* Koyu tema metin rengi */
+            }
+            .container {
+                background: #1e1e1e; /* Koyu tema içerik arka plan rengi */
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            }
+            textarea {
+                border: 1px solid #555; /* Koyu tema textarea kenar rengi */
+            }
+            button {
+                background-color: #5cb85c; /* Koyu tema buton rengi */
+            }
+            button:hover {
+                background-color: #4cae4c; /* Koyu tema buton hover rengi */
+            }
+            .result {
+                background-color: #222; /* Koyu tema çeviri sonucu arka plan rengi */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            Kivi Çeviri
+            <img src="textures/kivi_logo.png" alt="Kivi Logo"> <!-- Kivi logosu -->
+        </h1>
+        <textarea id="metin" placeholder="Çevirmek istediğiniz metni girin..."></textarea>
+        <div>
+            <button onclick="cevir()">Çevir</button>
+            <button class="small-button" onclick="tersineCevir()">Tersine Çevir</button> <!-- Küçük buton -->
+        </div>
+        <h2>Çeviri Sonucu:</h2>
+        <div class="result" id="ceviriSonucu"></div>
+    </div>
+
+    <script>
+        let ceviriYonu = 'tr-en'; // Başlangıç çeviri yönü: Türkçe'den İngilizce'ye
+
+        async function cevir() {
+            const metin = document.getElementById("metin").value;
+            const ceviriSonucu = document.getElementById("ceviriSonucu");
+            const diller = ceviriYonu.split('-'); // diller: ['tr', 'en'] veya ['en', 'tr']
+
+            // MyMemory API'si ile çeviri
+            const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(metin)}&langpair=${diller[0]}|${diller[1]}`);
+            const data = await response.json();
+
+            // Çeviri sonucunu göster
+            ceviriSonucu.textContent = data.responseData.translatedText || "Çeviri bulunamadı.";
+        }
+
+        function tersineCevir() {
+            // Çeviri yönünü değiştir
+            ceviriYonu = ceviriYonu === 'tr-en' ? 'en-tr' : 'tr-en';
+            const mevcutMetin = document.getElementById("metin").value;
+            document.getElementById("metin").value = mevcutMetin; // mevcut metni koru
+        }
+    </script>
+</body>
+</html>
